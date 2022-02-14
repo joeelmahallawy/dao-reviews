@@ -1,27 +1,38 @@
 import { Input, Button, Box, Center, Heading } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
+import crypto from "crypto";
 import Web3 from "web3";
-import loadContract from "../contracts/initialize";
-
-const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-
+import AddDAOForm from "../components/addDao";
+import getContract from "../contracts/getContract";
 const IndexPage = () => {
+  // getContract();
+  // new window.web3.eth.contract
+
+  // console.log(getContract());
+  // contract: null,
+  // console.log(getContract());
   const initialStateValues = {
-    fullName: "",
-    email: "",
-    contract: null,
+    NAME: "",
+    WEBSITELINK: "",
+    DISCORDLINK: "",
   };
   type StateTypes = {
-    fullName: string;
-    email: string;
-    contract: any;
+    ID: string;
+    NAME: string;
+    WEBSITELINK: string;
+    DISCORDLINK: string;
   };
 
-  const [state, setState] = useState<StateTypes>(initialStateValues);
+  const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
+
+  const [state, setState] = useState<StateTypes>();
 
   useEffect(() => {
-    loadContract(web3, state, setState);
+    // @ts-expect-error
+    window?.ethereum.enable();
   }, []);
+  // console.log(state);
+  console.log(crypto.randomBytes(36).toString("hex"));
 
   return (
     <>
@@ -37,40 +48,9 @@ const IndexPage = () => {
           Home
         </Button>
       </Center>
-      <Center bg="gray.500" flexDir="column">
-        <Input
-          w="50%"
-          variant="filled"
-          onChange={(e) => {
-            setState({ ...state, fullName: e.currentTarget.value });
-          }}
-          placeContent="First Name"
-        />
-        <Input
-          w="50%"
-          onChange={(e) => {
-            setState({ ...state, email: e.currentTarget.value });
-          }}
-          placeContent="Email"
-        />
-        <Button
-          onClick={async () => {
-            const userToAdd = { FULLNAME: state.fullName, EMAIL: state.email };
 
-            // const wallet = await web3.eth.requestAccounts();
-            const addUser = await state.contract.methods
-              .createUser(userToAdd)
-              .call();
-            // const addUser = await state.contract.methods
-            //   .createUser(userToAdd)
-            //   .send({ from: wallet[0] });
-            // const user = await state.contract.methods.Users(wallet[0]).call();
-
-            // console.log(add);
-          }}
-        >
-          Click me to add the data
-        </Button>
+      <Center bg="gray.500">
+        <AddDAOForm state={state} setState={setState} />
       </Center>
     </>
   );
