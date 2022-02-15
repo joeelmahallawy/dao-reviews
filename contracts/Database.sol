@@ -2,8 +2,11 @@ pragma solidity 0.8.11;
 // SPDX-License-Identifier: UNLICENSED
 
 contract Database {
-    address[] public daoOwners; 
+    // address[] public reviewMakers;
     
+    address[] public daoOwners;     
+    // DAO[] public daoOwners;     
+
     // DB schema
     struct Upvote {
         string ID;
@@ -26,6 +29,7 @@ contract Database {
         string TITLE;
         string CONTENT;
     }
+
     // —————————————————————————————————————————————————————————————————————————————————
 
     // Tables
@@ -33,17 +37,33 @@ contract Database {
     mapping(address=>DAO) public DAOs;
     mapping(address=> Upvote) public Upvotes;
 
-    // ————————————————————————————————————————————————————————————————————————————————
-    
-    // function createReview(Review memory data)public{
-    //     Reviews[msg.sender] = data;
-    // }
+    // ———————————————————————————————————————————————————————————————————
+    // Queries
+    function readAllDaos() public view returns(DAO[] memory){
+        DAO[] memory  allDaos; // initialize new array of daos
+        for(uint256 i=0;i<daoOwners.length;i++) {
+            // address currentAddress=daoOwners[i];
+            // allDaos[i]= DAO(DAOs[currentAddress].ID,DAOs[currentAddress].NAME,DAOs[currentAddress].WEBSITELINK,DAOs[currentAddress].DISCORDLINK);
+            // allDaos[i]=DAOs[currentAddress];            
+            allDaos[i]=DAOs[daoOwners[i]];
+        }
+        return allDaos; // return array of daos
+        
+    }
 
+    
+
+
+
+    // Mutations
     function createDAO(DAO memory _data)public{
+        // daoOwners.push(_data);
         daoOwners.push(msg.sender);
         DAOs[msg.sender] = _data;
     }
 
+
+    
 
     // Update
     // function updateUser(User memory data) public {

@@ -17,7 +17,8 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { contract, web3 } from "../lib/web3";
-// import { web3, contract } from "../lib/web3";
+import { DAO } from "../interfaces/schema";
+import { createDAO } from "../helpers/database/mutations";
 const AddDAOForm = ({ state, setState }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -34,7 +35,7 @@ const AddDAOForm = ({ state, setState }) => {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Name</FormLabel>
+              <FormLabel mt={3}>Name</FormLabel>
               <Input
                 variant="outline"
                 onChange={(e) => {
@@ -44,7 +45,8 @@ const AddDAOForm = ({ state, setState }) => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Website link</FormLabel>
+              <FormLabel mt={3}>Website link</FormLabel>
+
               <Input
                 onChange={(e) => {
                   setState({ ...state, WEBSITELINK: e.currentTarget.value });
@@ -53,7 +55,8 @@ const AddDAOForm = ({ state, setState }) => {
               />
             </FormControl>
             <FormControl>
-              <FormLabel>Discord link</FormLabel>
+              <FormLabel mt={3}>Discord link</FormLabel>
+
               <Input
                 onChange={(e) => {
                   setState({ ...state, DISCORDLINK: e.currentTarget.value });
@@ -70,35 +73,23 @@ const AddDAOForm = ({ state, setState }) => {
                 isLoading={isLoading}
                 colorScheme="linkedin"
                 onClick={async () => {
-                  //     const getDAO = async () => {
-                  //   const wallet = await web3.eth.requestAccounts();
-                  //   return await contract.methods
-                  //     .DAOs("0xd6Cc820A4B713443b57C2545df54F1d75334380f")
-                  //     .call();
-                  //     };
-                  //   const myDAO = await contract.methods.DAOs(wallet[0]).call();
-
-                  //   setIsLoading(true);
-                  console.log(contract.methods.daoOwners(0).call());
-                  //   const wallet = await web3.eth.requestAccounts();
-                  //   await contract?.methods
-                  //     .createDAO([
-                  //       crypto.randomBytes(36).toString("hex"),
-                  //       state.NAME,
-                  //       state.WEBSITELINK,
-                  //       state.DISCORDLINK,
-                  //     ])
-                  //     .send({ from: wallet[0] })
-                  //     .then((val) => {
-                  //       setIsLoading(false);
-                  //       return toast({
-                  //         title: "Account created.",
-                  //         description: "We've created your account for you.",
-                  //         status: "success",
-                  //         duration: 9000,
-                  //         isClosable: true,
-                  //       });
-                  //     });
+                  setIsLoading(true);
+                  const dao = {
+                    ID: crypto.randomBytes(36).toString("hex"),
+                    NAME: state.NAME,
+                    WEBSITELINK: state.WEBSITELINK,
+                    DISCORDLINK: state.DISCORDLINK,
+                  };
+                  createDAO(dao, state.wallet).then((val) => {
+                    setIsLoading(false);
+                    return toast({
+                      title: "Account created.",
+                      description: "We've created your account for you.",
+                      status: "success",
+                      duration: 9000,
+                      isClosable: true,
+                    });
+                  });
                 }}
               >
                 Submit
@@ -111,7 +102,3 @@ const AddDAOForm = ({ state, setState }) => {
   );
 };
 export default AddDAOForm;
-
-// <ModalContent>
-
-//   </ModalContent>

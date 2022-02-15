@@ -1,38 +1,31 @@
 import { Input, Button, Box, Center, Heading } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import crypto from "crypto";
-import Web3 from "web3";
+import { contract, web3 } from "../lib/web3";
 import AddDAOForm from "../components/addDao";
-import getContract from "../contracts/getContract";
+import { getAllDaos, getMyDao } from "../helpers/database/queries";
+import databaseABI from "../build/contracts/Database.json";
+import { DAO } from "../interfaces/schema";
 const IndexPage = () => {
-  // getContract();
-  // new window.web3.eth.contract
-
-  // console.log(getContract());
-  // contract: null,
-  // console.log(getContract());
   const initialStateValues = {
     NAME: "",
     WEBSITELINK: "",
     DISCORDLINK: "",
+    wallet: null,
+    allDaos: null,
   };
-  type StateTypes = {
-    ID: string;
-    NAME: string;
-    WEBSITELINK: string;
-    DISCORDLINK: string;
-  };
-
-  const web3 = new Web3(Web3.givenProvider || "ws://localhost:7545");
-
-  const [state, setState] = useState<StateTypes>();
+  const [state, setState] = useState(initialStateValues);
 
   useEffect(() => {
-    // @ts-expect-error
-    window?.ethereum.enable();
+    (async () => {
+      // @ts-expect-error
+      window?.ethereum.enable();
+      const wallet = await web3.eth.requestAccounts();
+      const allDaos = await getAllDaos();
+      setState({ ...state, wallet: wallet[0], allDaos });
+    })();
   }, []);
-  // console.log(state);
-  console.log(crypto.randomBytes(36).toString("hex"));
+
+  console.log(state);
 
   return (
     <>
